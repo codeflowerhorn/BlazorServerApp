@@ -1,0 +1,25 @@
+@page "/books"
+@using Models
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Client
+@inject BookHttpClient Http
+@inject IHttpClientFactory ClientFactory
+
+<PageTitle>Book</PageTitle>
+
+<h1>Books</h1>
+
+@foreach (var book in books)
+{
+    <p>@book.Title</p>
+}
+
+@code {
+
+    private IEnumerable<BookModel> books = [];
+    protected override async Task OnInitializedAsync()
+    {
+        books = await Http.GetBooksAsync();
+    }
+}
