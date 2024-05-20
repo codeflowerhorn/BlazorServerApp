@@ -11,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
-builder.Services.AddHttpClient<BookHttpClient>(client => client.BaseAddress = new Uri("http://localhost:5084"));
+builder.Services.AddHttpClient<BookHttpClient>(client => client.BaseAddress = new Uri(builder.Configuration["Host:baseUrl"]));
 builder.Services.AddDbContext<BookDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 
 var app = builder.Build();
