@@ -49,7 +49,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createBookModalLabel">Create a book</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    @onclick="OnClickCloseModal"></button>
             </div>
             <EditForm Model="forCreateBookModel" OnValidSubmit="CreateBook">
                 <DataAnnotationsValidator />
@@ -77,7 +78,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        @onclick="OnClickCloseModal">Close</button>
                     <button type="submit" class="btn btn-success">Create</button>
                 </div>
             </EditForm>
@@ -91,7 +93,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="updateBookModalLabel">Update a book</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    @onclick="OnClickCloseModal"></button>
             </div>
             <EditForm Model="forUpdateBookModel" OnValidSubmit="UpdateBook">
                 <DataAnnotationsValidator />
@@ -119,7 +122,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        @onclick="OnClickCloseModal">Close</button>
                     <button type="submit" class="btn btn-success">Update</button>
                 </div>
             </EditForm>
@@ -156,6 +160,12 @@
         forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
         await JsObjectRef.InvokeVoidAsync("CloseModal", "#createBookModal");
         StateHasChanged();
+    }
+
+    private void OnClickCloseModal()
+    {
+        forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+        forUpdateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
     }
 
     private async void UpdateBook()
