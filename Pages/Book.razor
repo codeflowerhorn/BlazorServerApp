@@ -5,21 +5,171 @@
 @using Client
 @inject BookHttpClient Http
 @inject IHttpClientFactory ClientFactory
+@inject IJSRuntime js
 
 <PageTitle>Book</PageTitle>
 
 <h1>Books</h1>
 
-@foreach (var book in books)
-{
-    <p>@book.Title</p>
-}
+<div class=" ">
+    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+        data-bs-target="#createBookModal">Create</button>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>
+                    <th>@book.Id</th>
+                    <th>@book.Title</th>
+                    <th>@book.Author</th>
+                    <th>@book.Genre</th>
+                    <th>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                            data-bs-target="#updateBookModal" @onclick="(() => onClickUpdate(book.Id))">Update</button>
+                        <button type="button" class="btn btn-danger" @onclick="(() => DeleteBook(book.Id))">Delete</button>
+                    </th>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Create book-->
+<div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createBookModalLabel">Create a book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model="forCreateBookModel" OnValidSubmit="CreateBook">
+                <DataAnnotationsValidator />
+                <div class="modal-body">
+                    <ValidationMessage For="@(() => forCreateBookModel.Title)" style="display: block !important" />
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Title</span>
+                        <label for="Title" hidden></label>
+                        <InputText id="Title" @bind-Value="forCreateBookModel.Title" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                    <ValidationMessage For="@(() => forCreateBookModel.Author)" style="display: block !important" />
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Author</span>
+                        <label for="Author" hidden></label>
+                        <InputText id="Author" @bind-Value="forCreateBookModel.Author" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                    <ValidationMessage For="@(() => forCreateBookModel.Genre)" style="display: block !important" />
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Genre</span>
+                        <label for="Genre" hidden></label>
+                        <InputText id="Genre" @bind-Value="forCreateBookModel.Genre" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Create</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update book-->
+<div class="modal fade" id="updateBookModal" tabindex="-1" aria-labelledby="updateBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateBookModalLabel">Update a book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model="forUpdateBookModel" OnValidSubmit="UpdateBook">
+                <DataAnnotationsValidator />
+                <div class="modal-body">
+                    <ValidationMessage For="@(() => forUpdateBookModel.Title)" style="display: block !important" />
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Title</span>
+                        <label for="Title" hidden></label>
+                        <InputText id="Title" @bind-Value="forUpdateBookModel.Title" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                    <ValidationMessage For="@(() => forUpdateBookModel.Author)" style="display: block !important" />
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Author</span>
+                        <label for="Author" hidden></label>
+                        <InputText id="Author" @bind-Value="forUpdateBookModel.Author" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                    <ValidationMessage For="@(() => forUpdateBookModel.Genre)" style="display: block !important" />
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Genre</span>
+                        <label for="Genre" hidden></label>
+                        <InputText id="Genre" @bind-Value="forUpdateBookModel.Genre" type="text" class="form-control"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Update</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
 
 @code {
-
     private IEnumerable<BookModel> books = [];
+    private BookModel forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+    private BookModel forUpdateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+    private IJSObjectReference JsObjectRef { get; set; }
     protected override async Task OnInitializedAsync()
     {
         books = await Http.GetBooksAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        JsObjectRef = await js.InvokeAsync<IJSObjectReference>("import", "/js/site.js");
+    }
+
+    private async void DeleteBook(int id)
+    {
+        await Http.DeleteBookAsync(id);
+        books = await Http.GetBooksAsync();
+        StateHasChanged();
+    }
+
+    private async void CreateBook()
+    {
+        await Http.CreateBookAsync(forCreateBookModel);
+        books = await Http.GetBooksAsync();
+        forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+        await JsObjectRef.InvokeVoidAsync("CloseModal", "#createBookModal");
+        StateHasChanged();
+    }
+
+    private async void UpdateBook()
+    {
+        await Http.UpdateBookAsync(forUpdateBookModel);
+        books = await Http.GetBooksAsync();
+        forUpdateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+        await JsObjectRef.InvokeVoidAsync("CloseModal", "#updateBookModal");
+        StateHasChanged();
+    }
+
+    private async void onClickUpdate(int id)
+    {
+        forUpdateBookModel = await Http.GetBookAsync(id);
+        StateHasChanged();
     }
 }
