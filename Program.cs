@@ -11,7 +11,17 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
 builder.Services.AddHttpClient<BookHttpClient>(client => client.BaseAddress = new Uri(builder.Configuration["Host:baseUrl"] ?? ""));
 builder.Services.AddDbContext<BookDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
-
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy(name: "MyAllowSpecificOrigins",
+                        b =>
+                        {
+                            b.WithOrigins(builder.Configuration["Host:baseUrl"] ?? "")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials(); ;
+                        });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
