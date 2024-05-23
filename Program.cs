@@ -13,7 +13,7 @@ builder.Services.AddHttpClient<BookHttpClient>(client => client.BaseAddress = ne
 builder.Services.AddDbContext<BookDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 builder.Services.AddCors(o =>
 {
-    o.AddPolicy(name: "MyAllowSpecificOrigins",
+    o.AddPolicy(name: "_myAllowSpecificOrigins",
                         b =>
                         {
                             b.WithOrigins(builder.Configuration["Host:baseUrl"] ?? "")
@@ -31,6 +31,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseCors("_myAllowSpecificOrigins");
 
 app.MapControllers();
 
