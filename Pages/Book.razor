@@ -25,17 +25,23 @@
             </tr>
         </thead>
         <tbody>
+            @{
+                int i = 0;
+            }
             @foreach (var book in books)
             {
+                i++;
+                var index = i;
                 <tr>
-                    <th>@book.Id</th>
+                    <th>@index</th>
                     <th>@book.Title</th>
                     <th>@book.Author</th>
                     <th>@book.Genre</th>
                     <th>
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal"
                             data-bs-target="#updateBookModal" @onclick="(() => onClickUpdate(book.Id))">Update</button>
-                        <button type="button" class="btn btn-danger" @onclick="(() => DeleteBook(book.Id))">Delete</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteBookModal" @onclick="(() => DeleteBook(book.Id))">Delete</button>
                     </th>
                 </tr>
             }
@@ -131,10 +137,32 @@
     </div>
 </div>
 
+<!-- Modal Delete book-->
+<div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteBookModalLabel">Delete a book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Do you want to delete the "@forDeleteBookModel.Title" book?</h6>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    @onclick="OnClickCloseModal">No</button>
+                <button type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                    @onclick="confirmDeleteBook">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @code {
     private IEnumerable<BookModel> books = [];
     private BookModel forCreateBookModel = new BookModel();
     private BookModel forUpdateBookModel = new BookModel();
+    private BookModel forDeleteBookModel = new BookModel();
     private IJSObjectReference JsObjectRef { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -148,8 +176,7 @@
 
     private async void DeleteBook(int id)
     {
-        await Http.DeleteBookAsync(id);
-        books = await Http.GetBooksAsync();
+        forDeleteBookModel = await Http.GetBookAsync(id);
         StateHasChanged();
     }
 
@@ -166,6 +193,7 @@
     {
         forCreateBookModel = new BookModel();
         forUpdateBookModel = new BookModel();
+        forDeleteBookModel = new BookModel();
     }
 
     private async void UpdateBook()
@@ -180,6 +208,13 @@
     private async void onClickUpdate(int id)
     {
         forUpdateBookModel = await Http.GetBookAsync(id);
+        StateHasChanged();
+    }
+
+    private async void confirmDeleteBook()
+    {
+        await Http.DeleteBookAsync(forDeleteBookModel.Id);
+        books = await Http.GetBooksAsync();
         StateHasChanged();
     }
 }
