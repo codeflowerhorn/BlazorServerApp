@@ -133,8 +133,8 @@
 
 @code {
     private IEnumerable<BookModel> books = [];
-    private BookModel forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
-    private BookModel forUpdateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+    private BookModel forCreateBookModel = new BookModel();
+    private BookModel forUpdateBookModel = new BookModel();
     private IJSObjectReference JsObjectRef { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -157,22 +157,22 @@
     {
         await Http.CreateBookAsync(forCreateBookModel);
         books = await Http.GetBooksAsync();
-        forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+        forCreateBookModel = new BookModel();
         await JsObjectRef.InvokeVoidAsync("CloseModal", "#createBookModal");
         StateHasChanged();
     }
 
     private void OnClickCloseModal()
     {
-        forCreateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
-        forUpdateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+        forCreateBookModel = new BookModel();
+        forUpdateBookModel = new BookModel();
     }
 
     private async void UpdateBook()
     {
         await Http.UpdateBookAsync(forUpdateBookModel);
         books = await Http.GetBooksAsync();
-        forUpdateBookModel = new BookModel() { Title = "", Author = "", Genre = "" };
+        forUpdateBookModel = new BookModel();
         await JsObjectRef.InvokeVoidAsync("CloseModal", "#updateBookModal");
         StateHasChanged();
     }

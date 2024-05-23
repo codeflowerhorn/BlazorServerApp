@@ -16,7 +16,7 @@ namespace BlazorServerApp.Client
 
         public async Task<BookModel> GetBookAsync(int id)
         {
-            return await http.GetFromJsonAsync<BookModel>("/api/book/id=" + id) ?? null;
+            return await http.GetFromJsonAsync<BookModel>("/api/book/id=" + id) ?? new BookModel();
         }
 
         public async Task<bool> UpdateBookAsync(BookModel book)

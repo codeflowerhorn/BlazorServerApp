@@ -6,10 +6,10 @@ namespace BlazorServerApp.Models
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Title is required")]
-        public required string Title { get; set; }
+        public string Title { get; set; } = "";
         [Required(ErrorMessage = "Author is required")]
-        public required string Author { get; set; }
+        public string Author { get; set; } = "";
         [Required(ErrorMessage = "Genre is required")]
-        public required string Genre { get; set; }
+        public string Genre { get; set; } = "";
     }
 }
